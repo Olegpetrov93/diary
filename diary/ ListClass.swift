@@ -6,38 +6,24 @@
 //
 
 import UIKit
+import RealmSwift
 
 
-struct List {
+
+class List: Object {
     
-    var id: Int
-    var dateStart: Date?
-    var dateFinish: Date?
-    var name: String
-    var description: String
+    @objc dynamic var id : String?
+    @objc dynamic var dateStart: Date?
+    @objc dynamic var dateFinish: Date?
+    @objc dynamic var name: String = ""
+    @objc dynamic var descriptionlist: String?
     
-    static let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .full
-        return dateFormatter
-    }()
-    
-    
-    static let inputsDescription = ["Завтрак", "Обед", "Полдник", "Ужин"]
-    
-    static func getList() -> [List] {
-        
-        var toDoList: [List] = []
-        
-        var id = 0
-        
-        for f in inputsDescription {
-            
-            toDoList.append(List(id: id, dateStart: Date("2014-06-06") , dateFinish: Date("2014-06-04"), name: f, description: f))
-            id += 1
-        }
-        
-        return toDoList
+    convenience init(id: String, dateStart: Date, dateFinish: Date, name: String, descriptionlist: String) {
+        self.init()
+        self.name = name
+        self.id = id
+        self.dateStart = dateStart
+        self.dateFinish = dateFinish
+        self.descriptionlist = descriptionlist
     }
-    
 }

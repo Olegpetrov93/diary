@@ -6,10 +6,11 @@
 //
 
 import UIKit
+import RealmSwift
 
 class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
-    var toDoList = List.getList()
+    private var toDoList : Results<List>!
     
     static let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -26,6 +27,8 @@ class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         
         self.view.addSubview(tableView)
         
+        toDoList = realm.objects(List.self)
+        
         setUpNavigation()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
@@ -37,8 +40,9 @@ class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         
         
         tableView.register(CastomCell.self, forCellReuseIdentifier: "Cell")
+        tableView.register(CalendarCell.self, forCellReuseIdentifier: "CalendarCell")
         
-//        editButtonItem.action =  #selector(openNewVC)
+        //        editButtonItem.action =  #selector(openNewVC)
         
     }
     // MARK: - Table view data source
@@ -49,52 +53,57 @@ class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CastomCell
-        
-        if 
-        
-        
-        let list = toDoList[indexPath.row]
-        
-        cell.nameLabel.text = list.name
-        cell.dateStartLabel.text = Self.dateFormatter.string(from: list.dateStart!)
-        cell.dateFinishLabel.text = Self.dateFormatter.string(from: list.dateFinish!)
 
-        return cell
+        if indexPath.row == 0 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "CalendarCell", for: indexPath) as! CalendarCell
+            
+            
+            return cell
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CastomCell
+            
+            let list = toDoList[indexPath.row-1]
+            
+            cell.nameLabel.text = list.name
+            cell.dateStartLabel.text = "Начало \(Self.dateFormatter.string(from: list.dateStart!))"
+            cell.dateFinishLabel.text = "Конец \(Self.dateFormatter.string(from: list.dateFinish!))"
+            return cell
+        }
+        
     }
     
-
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-       return 80
+        
+        if indexPath.row == 0 {
+            return view.frame.size.height/2
+        } else {
+            return 80
+        }
     }
+    
     func setUpNavigation() {
-
-        let saveBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(printHello))
+        
+        let saveBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(openNewVC))
         
         saveBarButtonItem.tintColor = UIColor(red: 180/255, green: 215/255, blue: 241/255, alpha: 1)
-            self.navigationItem.rightBarButtonItem  = saveBarButtonItem
+        self.navigationItem.rightBarButtonItem  = saveBarButtonItem
         
-     navigationItem.title = "Список дел"
+        navigationItem.title = "Список дел"
         self.navigationController?.navigationBar.barTintColor = UIColor(red: 28/255, green: 112/255, blue: 182/255, alpha: 1)
-     self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor(red: 180/255, green: 215/255, blue: 241/255, alpha: 1)]
     }
-//    @objc func openNewVC() {
-//
-//        let vc = NewField()
-//        vc.modalPresentationStyle = .fullScreen
-//        vc.delegate = self
-//
-//        present(vc, animated: true, completion: nil)
-//    }
-//}
+        @objc func openNewVC() {
+    
+            let vc = NewListViewController()
+            vc.modalPresentationStyle = .fullScreen
+    
+            present(vc, animated: true, completion: nil)
+        }
     @objc func printHello() {
         print("Hello")
     }
-//extension RootVC : FermerManagerDataSource {
-//    func addField(field: Field) {
-//        fermer.fields?.append(field)
-//        tableView.reloadData()
-//    }
+
 }
 
