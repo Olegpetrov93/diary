@@ -139,7 +139,7 @@ class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         calendar.backgroundColor = .white
         
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.topAnchor.constraint(equalTo: calendar.bottomAnchor, constant: calendar.frame.size.height).isActive = true
+        tableView.topAnchor.constraint(equalTo: calendar.bottomAnchor, constant: 0).isActive = true
         tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
         tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
         tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
