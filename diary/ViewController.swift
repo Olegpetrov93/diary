@@ -12,41 +12,48 @@ import FSCalendar
 class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     private var toDoList : Results<List>!
+    private var filtredList : Results<List>!
     
     
+
+    private var todayStart = Calendar.current.startOfDay(for: Date())
+    private var todayStartString: String {
+        get {
+            dateFormatterOffTime.string(from: todayStart)
+        }
+    }
+    private var todayEnd: Date {
+        get {
+            let components = DateComponents(day: 1, second: -1)
+              return Calendar.current.date(byAdding: components, to: todayStart)!
+        }
+    }
+    private var todayEndString: String {
+        get {
+            dateFormatterOffTime.string(from: todayEnd)
+        }
+    }
     let calendar = FSCalendar()
     
-    static let dateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .short
-        dateFormatter.locale = Locale(identifier: "ru_RU")
-        return dateFormatter
-    }()
-    
     let tableView = UITableView()
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        calendar.frame = CGRect(x: 0, y: 0, width: view.frame.size.width, height: view.frame.size.width)
-    }
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         
         toDoList = realm.objects(List.self)
         
         setUpCalendar()
         setUpNavigation()
         
+        filterContentForSearchDate()
+        
         tableView.delegate = self
         tableView.dataSource = self
         
-        tableView.register(CastomCell.self, forCellReuseIdentifier: "Cell")
-        //        tableView.register(CalendarCell.self, forCellReuseIdentifier: "CalendarCell")
+        calendar.delegate = self
         
+        tableView.register(CastomCell.self, forCellReuseIdentifier: "Cell")
         
     }
     override func viewWillAppear(_ animated: Bool) {
@@ -62,22 +69,16 @@ class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        //        if indexPath.row == 0 {
-        //            let cell = tableView.dequeueReusableCell(withIdentifier: "CalendarCell", for: indexPath) as! CalendarCell
-        //
-        //            return cell
-        //        } else {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CastomCell
         
         let list = toDoList[indexPath.row]
         
         cell.nameLabel.text = list.name
-        cell.dateStartLabel.text = "Начало \(Self.dateFormatter.string(from: list.dateStart!))"
-        cell.dateFinishLabel.text = "Конец \(Self.dateFormatter.string(from: list.dateFinish!))"
+        cell.dateStartLabel.text = "Начало \(dateFormatterWithTime.string(from: list.dateStart!))"
+        cell.dateFinishLabel.text = "Конец \(dateFormatterWithTime.string(from: list.dateFinish!))"
         return cell
     }
-    
-    //}
+
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         let list = toDoList[indexPath.row]
@@ -93,11 +94,7 @@ class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-//        if indexPath.row == 0 {
-//            return view.frame.size.height/2
-//        } else {
             return 80
-//        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -134,8 +131,9 @@ class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         
         calendar.translatesAutoresizingMaskIntoConstraints = false
         calendar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
-
-        
+        calendar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
+        calendar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
+        calendar.heightAnchor.constraint(equalToConstant: view.frame.size.height/2).isActive = true
         calendar.backgroundColor = .white
         
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -156,6 +154,18 @@ class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @objc func printHello() {
         print("Hello")
     }
+    func filterContentForSearchDate() {
+            
+        filtredList = toDoList.filter("dateStartDay CONTAINS[c] %@ OR dateFinishDay CONTAINS[c] %@", todayStartString, todayEndString)
+            
+            tableView.reloadData()
+        }
+
+}
+extension RootVC: FSCalendarDelegate {
     
+    func calendar(_ calendar: FSCalendar, didDeselect date: Date, at monthPosition: FSCalendarMonthPosition) {
+        todayStart = date
+    }
 }
 

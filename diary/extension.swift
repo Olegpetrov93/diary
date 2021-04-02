@@ -56,4 +56,17 @@ extension Date {
         self.init(timeInterval:0, since:date)
     }
 }
-
+public let dateFormatterWithTime: DateFormatter = {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateStyle = .medium
+    dateFormatter.timeStyle = .short
+    dateFormatter.locale = Locale(identifier: "ru_RU")
+    return dateFormatter
+}()
+public let dateFormatterOffTime: DateFormatter = {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateStyle = .medium
+    dateFormatter.timeStyle = .none
+    dateFormatter.locale = Locale(identifier: "ru_RU")
+    return dateFormatter
+}()

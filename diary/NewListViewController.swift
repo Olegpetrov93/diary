@@ -204,6 +204,9 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
             let startDate = dateStartPicker.date
             let finishDate = dateFinishPicker.date
             
+            let dateStartDay = dateFormatterOffTime.string(from: dateFinish!)
+           
+            
             var id: String {
                 return "\(nameText)-\(descriptionText)-\(String(Self.dateFormatter.string(from: startDate)))-\(String(Self.dateFormatter.string(from: startDate)))"
             }

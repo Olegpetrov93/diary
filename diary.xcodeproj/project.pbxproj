@@ -10,7 +10,6 @@
 		12277233EBD876231F9C320A /* Pods_diary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D83FEEB7CF003FBA83B8DA93 /* Pods_diary.framework */; };
 		630335172614EEAB00E9B303 /* CastomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630335162614EEAB00E9B303 /* CastomCell.swift */; };
 		6303351A2614EF1700E9B303 /* extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630335192614EF1700E9B303 /* extension.swift */; };
-		630335222615110200E9B303 /* CalendarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630335212615110200E9B303 /* CalendarCell.swift */; };
 		6303352B261526A200E9B303 /* StorigeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6303352A261526A200E9B303 /* StorigeManager.swift */; };
 		6303352E261529E000E9B303 /* NewListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6303352D261529E000E9B303 /* NewListViewController.swift */; };
 		63679D88261385A2009393A2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63679D87261385A2009393A2 /* AppDelegate.swift */; };
@@ -24,7 +23,6 @@
 /* Begin PBXFileReference section */
 		630335162614EEAB00E9B303 /* CastomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CastomCell.swift; sourceTree = "<group>"; };
 		630335192614EF1700E9B303 /* extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extension.swift; sourceTree = "<group>"; };
-		630335212615110200E9B303 /* CalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarCell.swift; sourceTree = "<group>"; };
 		6303352A261526A200E9B303 /* StorigeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorigeManager.swift; sourceTree = "<group>"; };
 		6303352D261529E000E9B303 /* NewListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewListViewController.swift; sourceTree = "<group>"; };
 		63679D84261385A2009393A2 /* diary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = diary.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,7 +77,6 @@
 				6303352D261529E000E9B303 /* NewListViewController.swift */,
 				63679D9D26138C0B009393A2 /*  ListClass.swift */,
 				630335162614EEAB00E9B303 /* CastomCell.swift */,
-				630335212615110200E9B303 /* CalendarCell.swift */,
 				6303352A261526A200E9B303 /* StorigeManager.swift */,
 				630335192614EF1700E9B303 /* extension.swift */,
 				63679D90261385A4009393A2 /* Assets.xcassets */,
@@ -220,7 +217,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				63679D8C261385A2009393A2 /* ViewController.swift in Sources */,
-				630335222615110200E9B303 /* CalendarCell.swift in Sources */,
 				63679D9E26138C0B009393A2 /*  ListClass.swift in Sources */,
 				6303352E261529E000E9B303 /* NewListViewController.swift in Sources */,
 				630335172614EEAB00E9B303 /* CastomCell.swift in Sources */,
