@@ -19,18 +19,9 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
         return dateFormatter
     }()
     
-    let nameTX : UITextField = {
-        let nameTX = UITextField()
-        nameTX.placeholder = "Событие"
-        nameTX.translatesAutoresizingMaskIntoConstraints = false
-        return nameTX
-    }()
-    let descriptionTX : UITextField = {
-        let descriptionTX = UITextField()
-        descriptionTX.placeholder = "Описание события"
-        descriptionTX.translatesAutoresizingMaskIntoConstraints = false
-        return descriptionTX
-    }()
+    let nameTX = UITextField()
+    
+    lazy var descriptionTX = UITextField()
     
     let dateStartLabel : UILabel = {
         let dateStartLabel = UILabel()
@@ -49,61 +40,167 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
     let dateStartPicker = UIDatePicker()
     let dateFinishPicker = UIDatePicker()
     
-    let scrollView = UIScrollView()
+    lazy var contentViewSize = CGSize(width: self.view.frame.width, height: self.view.frame.height + 400)
+    
+    lazy var scrollView: UIScrollView = {
+        let view = UIScrollView(frame: .zero)
+        view.backgroundColor = .systemBackground
+        view.frame = self.view.bounds
+        view.contentSize = contentViewSize
+        view.autoresizingMask = .flexibleHeight
+        view.showsHorizontalScrollIndicator = true
+        view.bounces = true
+        return view
+    }()
+    lazy var contentView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemBackground
+        view.frame.size = contentViewSize
+        return view
+    }()
+    
+    let saveBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(didTapSaveButton))
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setUp()
         
+        setUpNavigation()
+        setupEditScreen()
+        
+        
         nameTX.becomeFirstResponder()
         nameTX.delegate = self
+        descriptionTX.delegate = self
+        nameTX.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
+        descriptionTX.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
         
         dateStartPicker.setDate(Date(), animated: true)
         dateFinishPicker.setDate(Date(), animated: true)
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(didTapSaveButton))
     }
     func setUp() {
         
         
         view.addSubview(scrollView)
         
-        scrollView.anchor(top: view.topAnchor, left: view.leadingAnchor, bottom: view.bottomAnchor, right: view.rightAnchor, paddingTop: 50, paddingLeft: 0, paddingBottom: 0, paddingRight: 0, width: 0, height: 0, enableInsets: false)
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.backgroundColor = .systemGray
+        scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 0).isActive = true
+        scrollView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
+        scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 0).isActive = true
+        scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
         
+        scrollView.addSubview(contentView)
         
-        scrollView.addSubview(nameTX)
-        scrollView.addSubview(descriptionTX)
-        scrollView.addSubview(dateStartLabel)
-        scrollView.addSubview(dateFinishLabel)
-        scrollView.addSubview(dateStartPicker)
-        scrollView.addSubview(dateFinishPicker)
+        contentView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor).isActive = true
+        contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
+        contentView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
+        contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
         
-        nameTX.anchor(top: scrollView.topAnchor, left: scrollView.leadingAnchor, bottom: nil, right: scrollView.rightAnchor, paddingTop: 0, paddingLeft: 5, paddingBottom: 0, paddingRight: 5, width: 0, height: 0, enableInsets: false)
+        contentView.addSubview(nameTX)
+        contentView.addSubview(descriptionTX)
+        contentView.addSubview(dateStartLabel)
+        contentView.addSubview(dateFinishLabel)
+        contentView.addSubview(dateStartPicker)
+        contentView.addSubview(dateFinishPicker)
         
-        descriptionTX.anchor(top: nameTX.bottomAnchor, left: scrollView.leadingAnchor, bottom: nil, right: scrollView.rightAnchor, paddingTop: 50, paddingLeft: 5, paddingBottom: 0, paddingRight: 5, width: 0, height: view.frame.size.height/4, enableInsets: false)
+        nameTX.translatesAutoresizingMaskIntoConstraints = false
+        nameTX.backgroundColor = .systemBackground
+        nameTX.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
+        nameTX.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        nameTX.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
         
-        dateStartLabel.anchor(top: descriptionTX.bottomAnchor, left: scrollView.leadingAnchor, bottom: nil, right: nil, paddingTop: 50, paddingLeft: 5, paddingBottom: 0, paddingRight: 0, width: view.frame.size.width/2 - 20, height: 0, enableInsets: false)
+        nameTX.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: nameTX.frame.height))
+        nameTX.placeholder = "Событие"
+        nameTX.leftViewMode = .always
+        nameTX.layer.cornerRadius = 5
+        nameTX.layer.borderWidth = 1.0
+        nameTX.layer.borderColor = (UIColor(red: 15.0/255.0, green: 116.0/255.0, blue: 119.0/255.0, alpha: 1.0)).cgColor
         
-        dateStartPicker.anchor(top: dateStartLabel.bottomAnchor, left: scrollView.leadingAnchor, bottom: nil, right: nil, paddingTop: 50, paddingLeft: 5, paddingBottom: 0, paddingRight: 0, width: view.frame.size.width/2 - 20, height: 0, enableInsets: false)
+        descriptionTX.translatesAutoresizingMaskIntoConstraints = false
+        descriptionTX.backgroundColor = .systemBackground
+        descriptionTX.topAnchor.constraint(equalTo: nameTX.bottomAnchor, constant: 10).isActive = true
+        descriptionTX.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        descriptionTX.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
+        descriptionTX.placeholder = "Описание события"
+        descriptionTX.frame.size.height = 100
+        descriptionTX.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: nameTX.frame.height))
+        descriptionTX.leftViewMode = .always
+        descriptionTX.layer.cornerRadius = 5
+        descriptionTX.layer.borderWidth = 1.0
+        descriptionTX.layer.borderColor = (UIColor(red: 15.0/255.0, green: 116.0/255.0, blue: 119.0/255.0, alpha: 1.0)).cgColor
         
-        dateFinishLabel.anchor(top: descriptionTX.bottomAnchor, left: nil, bottom: nil, right: scrollView.rightAnchor, paddingTop: 50, paddingLeft: 0, paddingBottom: 0, paddingRight: 5, width: view.frame.size.width/2 - 20, height: 0, enableInsets: false)
+        dateStartLabel.translatesAutoresizingMaskIntoConstraints = false
+        dateStartLabel.backgroundColor = .systemBackground
+        dateStartLabel.textAlignment = .center
+        dateStartLabel.topAnchor.constraint(equalTo: descriptionTX.bottomAnchor, constant: 10).isActive = true
+        dateStartLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        dateStartLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0).isActive = true
         
-        dateFinishPicker.anchor(top: dateFinishLabel.bottomAnchor, left: nil, bottom: nil, right: scrollView.rightAnchor, paddingTop: 50, paddingLeft: 0, paddingBottom: 0, paddingRight: 5, width: view.frame.size.width/2 - 20, height: 0, enableInsets: false)
+        dateStartPicker.translatesAutoresizingMaskIntoConstraints = false
+        dateStartPicker.topAnchor.constraint(equalTo: dateStartLabel.bottomAnchor, constant: 10).isActive = true
+        dateStartPicker.centerXAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 0).isActive = true
         
+        dateFinishLabel.translatesAutoresizingMaskIntoConstraints = false
+        dateFinishLabel.backgroundColor = .systemBackground
+        dateFinishLabel.textAlignment = .center
+        dateFinishLabel.topAnchor.constraint(equalTo: dateStartPicker.bottomAnchor, constant: 10).isActive = true
+        dateFinishLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
+        dateFinishLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0).isActive = true
         
+        dateFinishPicker.translatesAutoresizingMaskIntoConstraints = false
+        dateFinishPicker.topAnchor.constraint(equalTo: dateFinishLabel.bottomAnchor, constant: 10).isActive = true
+        dateFinishPicker.centerXAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 0).isActive = true
+
         
     }
-    
-    
+    func setUpNavigation() {
+        
+        saveBarButtonItem.isEnabled = false
+        
+        self.navigationController!.navigationBar.tintColor = UIColor(red: 180/255, green: 215/255, blue: 241/255, alpha: 1)
+ 
+        self.navigationItem.rightBarButtonItem  = saveBarButtonItem
+        
+        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor(red: 180/255, green: 215/255, blue: 241/255, alpha: 1)]
+        
+    }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
     }
-    @objc func didTapSaveButton() {
-        if let nameText = nameTX.text, !nameText.isEmpty, let descriptionText = descriptionTX.text, !descriptionText.isEmpty {
+    @objc private func textFieldChanged() {
+        
+        if nameTX.text!.isEmpty == false && descriptionTX.text!.isEmpty == false {
+            saveBarButtonItem.isEnabled = true
+        } else {
+            saveBarButtonItem.isEnabled = false
+        }
+    }
+    private func setupEditScreen() {
+        
+        if currentList != nil {
             
+            nameTX.text = currentList.name
+            descriptionTX.text = currentList.descriptionlist
+            dateStartPicker.date = currentList.dateStart!
+            dateFinishPicker.date = currentList.dateFinish!
+
+        }
+    }
+    
+    
+    
+    @objc func didTapSaveButton() {
+        if dateStartPicker.date < dateFinishPicker.date {
+            
+            
+            let nameText = nameTX.text
+            let descriptionText = descriptionTX.text
             let startDate = dateStartPicker.date
             let finishDate = dateFinishPicker.date
             
@@ -111,11 +208,30 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
                 return "\(nameText)-\(descriptionText)-\(String(Self.dateFormatter.string(from: startDate)))-\(String(Self.dateFormatter.string(from: startDate)))"
             }
             
-            let newList = List(id: id, dateStart: startDate, dateFinish: finishDate, name: nameText, descriptionlist: descriptionText)
+            let newList = List(id: id, dateStart: startDate, dateFinish: finishDate, name: nameText!, descriptionlist: descriptionText!)
             
-            StorigeManadger.saveObject(newList)
-            
+            if currentList != nil {
+                try! realm.write {
+                    currentList?.name = newList.name
+                    currentList?.descriptionlist = newList.descriptionlist
+                    currentList?.dateStart = newList.dateStart
+                    currentList?.dateFinish = newList.dateFinish
+                }
+            } else {
+                StorigeManadger.saveObject(newList)
+            }
             navigationController?.popToRootViewController(animated: true)
+        } else {
+            
+            let alert = UIAlertController(title: "Введенные данные времени и дат некорректны", message: "Проверте введенные вами параметры даты и времени. Начало событие не может быть позднее его окончания", preferredStyle: .alert)
+            
+            let cancel = UIAlertAction(title: "Ok", style: .cancel)
+            
+            alert.addAction(cancel)
+            present(alert, animated: true)
+            
+            dateFinishPicker.backgroundColor = .red
+            dateStartPicker.backgroundColor = .red
         }
     }
 }

@@ -79,8 +79,8 @@
 				6303352D261529E000E9B303 /* NewListViewController.swift */,
 				63679D9D26138C0B009393A2 /*  ListClass.swift */,
 				630335162614EEAB00E9B303 /* CastomCell.swift */,
-				6303352A261526A200E9B303 /* StorigeManager.swift */,
 				630335212615110200E9B303 /* CalendarCell.swift */,
+				6303352A261526A200E9B303 /* StorigeManager.swift */,
 				630335192614EF1700E9B303 /* extension.swift */,
 				63679D90261385A4009393A2 /* Assets.xcassets */,
 				63679D92261385A4009393A2 /* LaunchScreen.storyboard */,
@@ -370,6 +370,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3YGACN3ADP;
 				INFOPLIST_FILE = diary/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -390,6 +391,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3YGACN3ADP;
 				INFOPLIST_FILE = diary/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
