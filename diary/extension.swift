@@ -70,3 +70,6 @@ public let dateFormatterOffTime: DateFormatter = {
     dateFormatter.locale = Locale(identifier: "ru_RU")
     return dateFormatter
 }()
+protocol JSONDecodable {
+    init?(JSON: [String: AnyObject])
+}

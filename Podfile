@@ -7,6 +7,7 @@ target 'diary' do
 
   pod 'RealmSwift'
   pod 'FSCalendar'
+  pod 'SwiftyJSON'
 
 
 end 

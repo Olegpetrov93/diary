@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SwiftyJSON
 
 class NewListViewController: UIViewController, UITextFieldDelegate {
     
@@ -40,24 +41,7 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
     let dateStartPicker = UIDatePicker()
     let dateFinishPicker = UIDatePicker()
     
-    lazy var contentViewSize = CGSize(width: self.view.frame.width, height: self.view.frame.height + 400)
     
-    lazy var scrollView: UIScrollView = {
-        let view = UIScrollView(frame: .zero)
-        view.backgroundColor = .systemBackground
-        view.frame = self.view.bounds
-        view.contentSize = contentViewSize
-        view.autoresizingMask = .flexibleHeight
-        view.showsHorizontalScrollIndicator = true
-        view.bounces = true
-        return view
-    }()
-    lazy var contentView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .systemBackground
-        view.frame.size = contentViewSize
-        return view
-    }()
     
     let saveBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(didTapSaveButton))
     
@@ -82,35 +66,20 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
     }
     func setUp() {
         
+        view.backgroundColor = .white
         
-        view.addSubview(scrollView)
-        
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        scrollView.backgroundColor = .systemGray
-        scrollView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 0).isActive = true
-        scrollView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0).isActive = true
-        scrollView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 0).isActive = true
-        scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0).isActive = true
-        
-        scrollView.addSubview(contentView)
-        
-        contentView.centerXAnchor.constraint(equalTo: scrollView.centerXAnchor).isActive = true
-        contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor).isActive = true
-        contentView.topAnchor.constraint(equalTo: scrollView.topAnchor).isActive = true
-        contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
-        
-        contentView.addSubview(nameTX)
-        contentView.addSubview(descriptionTX)
-        contentView.addSubview(dateStartLabel)
-        contentView.addSubview(dateFinishLabel)
-        contentView.addSubview(dateStartPicker)
-        contentView.addSubview(dateFinishPicker)
+        view.addSubview(nameTX)
+        view.addSubview(descriptionTX)
+        view.addSubview(dateStartLabel)
+        view.addSubview(dateFinishLabel)
+        view.addSubview(dateStartPicker)
+        view.addSubview(dateFinishPicker)
         
         nameTX.translatesAutoresizingMaskIntoConstraints = false
         nameTX.backgroundColor = .systemBackground
-        nameTX.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10).isActive = true
-        nameTX.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
-        nameTX.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
+        nameTX.topAnchor.constraint(equalTo: view.topAnchor, constant: 10).isActive = true
+        nameTX.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5).isActive = true
+        nameTX.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -5).isActive = true
         
         nameTX.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: nameTX.frame.height))
         nameTX.placeholder = "Событие"
@@ -122,10 +91,10 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
         descriptionTX.translatesAutoresizingMaskIntoConstraints = false
         descriptionTX.backgroundColor = .systemBackground
         descriptionTX.topAnchor.constraint(equalTo: nameTX.bottomAnchor, constant: 10).isActive = true
-        descriptionTX.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
-        descriptionTX.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5).isActive = true
+        descriptionTX.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5).isActive = true
+        descriptionTX.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -5).isActive = true
         descriptionTX.placeholder = "Описание события"
-        descriptionTX.frame.size.height = 100
+        descriptionTX.heightAnchor.constraint(equalToConstant: 50).isActive = true
         descriptionTX.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 5, height: nameTX.frame.height))
         descriptionTX.leftViewMode = .always
         descriptionTX.layer.cornerRadius = 5
@@ -136,23 +105,23 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
         dateStartLabel.backgroundColor = .systemBackground
         dateStartLabel.textAlignment = .center
         dateStartLabel.topAnchor.constraint(equalTo: descriptionTX.bottomAnchor, constant: 10).isActive = true
-        dateStartLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
-        dateStartLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0).isActive = true
+        dateStartLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5).isActive = true
+        dateStartLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
         
         dateStartPicker.translatesAutoresizingMaskIntoConstraints = false
         dateStartPicker.topAnchor.constraint(equalTo: dateStartLabel.bottomAnchor, constant: 10).isActive = true
-        dateStartPicker.centerXAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 0).isActive = true
+        dateStartPicker.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0).isActive = true
         
         dateFinishLabel.translatesAutoresizingMaskIntoConstraints = false
         dateFinishLabel.backgroundColor = .systemBackground
         dateFinishLabel.textAlignment = .center
         dateFinishLabel.topAnchor.constraint(equalTo: dateStartPicker.bottomAnchor, constant: 10).isActive = true
-        dateFinishLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 5).isActive = true
-        dateFinishLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: 0).isActive = true
+        dateFinishLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5).isActive = true
+        dateFinishLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
         
         dateFinishPicker.translatesAutoresizingMaskIntoConstraints = false
         dateFinishPicker.topAnchor.constraint(equalTo: dateFinishLabel.bottomAnchor, constant: 10).isActive = true
-        dateFinishPicker.centerXAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 0).isActive = true
+        dateFinishPicker.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0).isActive = true
 
         
     }
@@ -204,21 +173,24 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
             let startDate = dateStartPicker.date
             let finishDate = dateFinishPicker.date
             
-            let dateStartDay = dateFormatterOffTime.string(from: dateFinish!)
-           
-            
             var id: String {
                 return "\(nameText)-\(descriptionText)-\(String(Self.dateFormatter.string(from: startDate)))-\(String(Self.dateFormatter.string(from: startDate)))"
             }
             
-            let newList = List(id: id, dateStart: startDate, dateFinish: finishDate, name: nameText!, descriptionlist: descriptionText!)
+            let newList = List(id: id, name: nameText!, descriptionlist: descriptionText!, dateStart: startDate, dateFinish: finishDate)
+            
+//            let jsonArray = JSON(newList)
+//            let course = List(courseJson: jsonArray)
+//                StorigeManadger.saveObject(course)
             
             if currentList != nil {
                 try! realm.write {
                     currentList?.name = newList.name
                     currentList?.descriptionlist = newList.descriptionlist
                     currentList?.dateStart = newList.dateStart
+                    currentList.dateStartDay = newList.dateStartDay
                     currentList?.dateFinish = newList.dateFinish
+                    currentList.dateFinishDay = newList.dateFinishDay
                 }
             } else {
                 StorigeManadger.saveObject(newList)

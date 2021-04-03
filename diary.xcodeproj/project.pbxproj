@@ -12,6 +12,7 @@
 		6303351A2614EF1700E9B303 /* extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630335192614EF1700E9B303 /* extension.swift */; };
 		6303352B261526A200E9B303 /* StorigeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6303352A261526A200E9B303 /* StorigeManager.swift */; };
 		6303352E261529E000E9B303 /* NewListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6303352D261529E000E9B303 /* NewListViewController.swift */; };
+		63400AD226190C8C00160039 /* NewListVC.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63400AD126190C8C00160039 /* NewListVC.storyboard */; };
 		63679D88261385A2009393A2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63679D87261385A2009393A2 /* AppDelegate.swift */; };
 		63679D8A261385A2009393A2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63679D89261385A2009393A2 /* SceneDelegate.swift */; };
 		63679D8C261385A2009393A2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63679D8B261385A2009393A2 /* ViewController.swift */; };
@@ -25,6 +26,7 @@
 		630335192614EF1700E9B303 /* extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extension.swift; sourceTree = "<group>"; };
 		6303352A261526A200E9B303 /* StorigeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorigeManager.swift; sourceTree = "<group>"; };
 		6303352D261529E000E9B303 /* NewListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewListViewController.swift; sourceTree = "<group>"; };
+		63400AD126190C8C00160039 /* NewListVC.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NewListVC.storyboard; sourceTree = "<group>"; };
 		63679D84261385A2009393A2 /* diary.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = diary.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63679D87261385A2009393A2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		63679D89261385A2009393A2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -75,6 +77,7 @@
 				63679D89261385A2009393A2 /* SceneDelegate.swift */,
 				63679D8B261385A2009393A2 /* ViewController.swift */,
 				6303352D261529E000E9B303 /* NewListViewController.swift */,
+				63400AD126190C8C00160039 /* NewListVC.storyboard */,
 				63679D9D26138C0B009393A2 /*  ListClass.swift */,
 				630335162614EEAB00E9B303 /* CastomCell.swift */,
 				6303352A261526A200E9B303 /* StorigeManager.swift */,
@@ -164,6 +167,7 @@
 			files = (
 				63679D94261385A4009393A2 /* LaunchScreen.storyboard in Resources */,
 				63679D91261385A4009393A2 /* Assets.xcassets in Resources */,
+				63400AD226190C8C00160039 /* NewListVC.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

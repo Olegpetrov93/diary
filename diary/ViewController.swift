@@ -22,21 +22,11 @@ class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
             dateFormatterOffTime.string(from: todayStart)
         }
     }
-    private var todayEnd: Date {
-        get {
-            let components = DateComponents(day: 1, second: -1)
-              return Calendar.current.date(byAdding: components, to: todayStart)!
-        }
-    }
-    private var todayEndString: String {
-        get {
-            dateFormatterOffTime.string(from: todayEnd)
-        }
-    }
     let calendar = FSCalendar()
     
     let tableView = UITableView()
     
+    let hourtoDay = 24
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,7 +53,7 @@ class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     // MARK: - Table view data source
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return toDoList.count
+        return 24
     }
     
     
@@ -71,7 +61,7 @@ class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath) as! CastomCell
         
-        let list = toDoList[indexPath.row]
+        let list = filtredList[indexPath.row]
         
         cell.nameLabel.text = list.name
         cell.dateStartLabel.text = "Начало \(dateFormatterWithTime.string(from: list.dateStart!))"
@@ -81,7 +71,7 @@ class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
-        let list = toDoList[indexPath.row]
+        let list = filtredList[indexPath.row]
         let deleteAction = UIContextualAction(style: .destructive, title: "Delite") {  (contextualAction, view, boolValue) in
             
             StorigeManadger.deliteObject(list)
@@ -100,7 +90,7 @@ class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let list = toDoList[indexPath.row]
+        let list = filtredList[indexPath.row]
         
         let vc = NewListViewController()
         
@@ -133,7 +123,7 @@ class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         calendar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 0).isActive = true
         calendar.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
         calendar.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0).isActive = true
-        calendar.heightAnchor.constraint(equalToConstant: view.frame.size.height/2).isActive = true
+        calendar.heightAnchor.constraint(equalToConstant: view.frame.size.height/3).isActive = true
         calendar.backgroundColor = .white
         
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -156,8 +146,8 @@ class RootVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     }
     func filterContentForSearchDate() {
             
-        filtredList = toDoList.filter("dateStartDay CONTAINS[c] %@ OR dateFinishDay CONTAINS[c] %@", todayStartString, todayEndString)
-            
+        filtredList = toDoList.filter("dateStartDay CONTAINS[c] %@ OR dateFinishDay CONTAINS[c] %@", todayStartString, todayStartString)
+        filtredList = filtredList.sorted(byKeyPath: "dateStart")
             tableView.reloadData()
         }
 
@@ -166,6 +156,7 @@ extension RootVC: FSCalendarDelegate {
     
     func calendar(_ calendar: FSCalendar, didDeselect date: Date, at monthPosition: FSCalendarMonthPosition) {
         todayStart = date
+        filterContentForSearchDate()
     }
 }
 
