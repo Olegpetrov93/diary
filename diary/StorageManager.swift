@@ -9,7 +9,7 @@ import RealmSwift
 
 let realm = try! Realm()
 
-class StorigeManadger {
+final class StorageManadger {
     
     static func saveObject(_ list: List) {
         

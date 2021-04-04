@@ -9,10 +9,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--New ListVC-->
         <scene sceneID="ns4-OJ-1SB">
             <objects>
-                <viewController id="Hkw-af-oTT" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="NewListVC" id="Hkw-af-oTT" customClass="NewListVC" customModule="diary" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="buL-B4-lg3">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

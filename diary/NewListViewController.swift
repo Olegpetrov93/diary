@@ -8,7 +8,7 @@
 import UIKit
 import SwiftyJSON
 
-class NewListViewController: UIViewController, UITextFieldDelegate {
+final class NewListViewController: UIViewController, UITextFieldDelegate {
     
     var currentList: List!
     
@@ -42,7 +42,6 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
     let dateFinishPicker = UIDatePicker()
     
     
-    
     let saveBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(didTapSaveButton))
     
     override func viewDidLoad() {
@@ -60,10 +59,26 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
         nameTX.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
         descriptionTX.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
         
-        dateStartPicker.setDate(Date(), animated: true)
-        dateFinishPicker.setDate(Date(), animated: true)
+        let startDate = Date().addingTimeInterval(1 * 60 * 60)
+        dateStartPicker.setDate(startDate, animated: true)
+        dateStartPicker.maximumDate = startDate.addingTimeInterval(1 * 60 * 60)
+        dateFinishPicker.setDate(dateStartPicker.maximumDate!, animated: true)
+        dateFinishPicker.minimumDate = dateStartPicker.maximumDate!
+
+        dateStartPicker.addTarget(self, action: #selector(pickerChange(_:)), for: .valueChanged)
         
     }
+    
+    @objc func pickerChange(_ picker: UIDatePicker) {
+        if picker == dateStartPicker {
+            dateFinishPicker.minimumDate = dateStartPicker.date.addingTimeInterval(1 * 60 * 60)
+        }
+        
+        if picker == dateFinishPicker {
+            dateStartPicker.maximumDate = dateFinishPicker.date.addingTimeInterval(-1 * 60 * 60)
+        }
+    }
+    
     func setUp() {
         
         view.backgroundColor = .white
@@ -76,7 +91,7 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
         view.addSubview(dateFinishPicker)
         
         nameTX.translatesAutoresizingMaskIntoConstraints = false
-        nameTX.backgroundColor = .systemBackground
+        nameTX.backgroundColor = .white
         nameTX.topAnchor.constraint(equalTo: view.topAnchor, constant: 10).isActive = true
         nameTX.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5).isActive = true
         nameTX.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -5).isActive = true
@@ -89,7 +104,7 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
         nameTX.layer.borderColor = (UIColor(red: 15.0/255.0, green: 116.0/255.0, blue: 119.0/255.0, alpha: 1.0)).cgColor
         
         descriptionTX.translatesAutoresizingMaskIntoConstraints = false
-        descriptionTX.backgroundColor = .systemBackground
+        descriptionTX.backgroundColor = .white
         descriptionTX.topAnchor.constraint(equalTo: nameTX.bottomAnchor, constant: 10).isActive = true
         descriptionTX.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5).isActive = true
         descriptionTX.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -5).isActive = true
@@ -102,7 +117,7 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
         descriptionTX.layer.borderColor = (UIColor(red: 15.0/255.0, green: 116.0/255.0, blue: 119.0/255.0, alpha: 1.0)).cgColor
         
         dateStartLabel.translatesAutoresizingMaskIntoConstraints = false
-        dateStartLabel.backgroundColor = .systemBackground
+        dateStartLabel.backgroundColor = .white
         dateStartLabel.textAlignment = .center
         dateStartLabel.topAnchor.constraint(equalTo: descriptionTX.bottomAnchor, constant: 10).isActive = true
         dateStartLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5).isActive = true
@@ -113,7 +128,7 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
         dateStartPicker.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0).isActive = true
         
         dateFinishLabel.translatesAutoresizingMaskIntoConstraints = false
-        dateFinishLabel.backgroundColor = .systemBackground
+        dateFinishLabel.backgroundColor = .white
         dateFinishLabel.textAlignment = .center
         dateFinishLabel.topAnchor.constraint(equalTo: dateStartPicker.bottomAnchor, constant: 10).isActive = true
         dateFinishLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 5).isActive = true
@@ -162,27 +177,16 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
         }
     }
     
-    
-    
     @objc func didTapSaveButton() {
         if dateStartPicker.date < dateFinishPicker.date {
-            
             
             let nameText = nameTX.text
             let descriptionText = descriptionTX.text
             let startDate = dateStartPicker.date
             let finishDate = dateFinishPicker.date
-            
-            var id: String {
-                return "\(nameText)-\(descriptionText)-\(String(Self.dateFormatter.string(from: startDate)))-\(String(Self.dateFormatter.string(from: startDate)))"
-            }
-            
-            let newList = List(id: id, name: nameText!, descriptionlist: descriptionText!, dateStart: startDate, dateFinish: finishDate)
-            
-//            let jsonArray = JSON(newList)
-//            let course = List(courseJson: jsonArray)
-//                StorigeManadger.saveObject(course)
-            
+
+            let newList = List(id: UUID().uuidString, name: nameText!, descriptionlist: descriptionText!, dateStart: startDate, dateFinish: finishDate)
+
             if currentList != nil {
                 try! realm.write {
                     currentList?.name = newList.name
@@ -193,8 +197,9 @@ class NewListViewController: UIViewController, UITextFieldDelegate {
                     currentList.dateFinishDay = newList.dateFinishDay
                 }
             } else {
-                StorigeManadger.saveObject(newList)
+                StorageManadger.saveObject(newList)
             }
+            
             navigationController?.popToRootViewController(animated: true)
         } else {
             
