@@ -7,9 +7,8 @@
 
 import UIKit
 
-
 final class EventView: UIView {
-
+    
     var onTap: (()->Void)?
     var title = "" {
         didSet {

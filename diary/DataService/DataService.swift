@@ -36,7 +36,7 @@ final class DataService {
         let results = realm.objects(List.self)
         
         var items = [CodableWorkItem]()
-       
+        
         for item in results {
             items.append(item.workItem)
         }

@@ -8,9 +8,7 @@
 import UIKit
 import SwiftyJSON
 
-final class NewListViewController: UIViewController, UITextFieldDelegate {
-    
-    var currentList: List!
+final class NewListViewController: UIViewController {
     
     static let dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -20,29 +18,30 @@ final class NewListViewController: UIViewController, UITextFieldDelegate {
         return dateFormatter
     }()
     
-    let nameTX = UITextField()
+    var currentList: List!
     
-    lazy var descriptionTX = UITextField()
+    private let nameTX = UITextField()
     
-    let dateStartLabel : UILabel = {
+    private lazy var descriptionTX = UITextField()
+    
+    private let dateStartLabel : UILabel = {
         let dateStartLabel = UILabel()
         dateStartLabel.text = "Начало события"
         dateStartLabel.translatesAutoresizingMaskIntoConstraints = false
         return dateStartLabel
     }()
     
-    let dateFinishLabel : UILabel = {
+    private let dateFinishLabel : UILabel = {
         let dateFinishLabel = UILabel()
         dateFinishLabel.text = "Конец события"
         dateFinishLabel.translatesAutoresizingMaskIntoConstraints = false
         return dateFinishLabel
     }()
     
-    let dateStartPicker = UIDatePicker()
-    let dateFinishPicker = UIDatePicker()
+    private let dateStartPicker = UIDatePicker()
+    private let dateFinishPicker = UIDatePicker()
     
-    
-    let saveBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(didTapSaveButton))
+    private let saveBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(didTapSaveButton))
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -64,7 +63,7 @@ final class NewListViewController: UIViewController, UITextFieldDelegate {
         dateStartPicker.maximumDate = startDate.addingTimeInterval(1 * 60 * 60)
         dateFinishPicker.setDate(dateStartPicker.maximumDate!, animated: true)
         dateFinishPicker.minimumDate = dateStartPicker.maximumDate!
-
+        
         dateStartPicker.addTarget(self, action: #selector(pickerChange(_:)), for: .valueChanged)
         
     }
@@ -78,6 +77,8 @@ final class NewListViewController: UIViewController, UITextFieldDelegate {
             dateStartPicker.maximumDate = dateFinishPicker.date.addingTimeInterval(-1 * 60 * 60)
         }
     }
+    
+    // MARK: - Setups
     
     func setUp() {
         
@@ -137,56 +138,44 @@ final class NewListViewController: UIViewController, UITextFieldDelegate {
         dateFinishPicker.translatesAutoresizingMaskIntoConstraints = false
         dateFinishPicker.topAnchor.constraint(equalTo: dateFinishLabel.bottomAnchor, constant: 10).isActive = true
         dateFinishPicker.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0).isActive = true
-
-        
     }
+    
     func setUpNavigation() {
-        
         saveBarButtonItem.isEnabled = false
         
         self.navigationController!.navigationBar.tintColor = UIColor(red: 180/255, green: 215/255, blue: 241/255, alpha: 1)
- 
+        
         self.navigationItem.rightBarButtonItem  = saveBarButtonItem
         
         self.navigationController?.navigationBar.isTranslucent = false
-        self.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor:UIColor(red: 180/255, green: 215/255, blue: 241/255, alpha: 1)]
-        
+        self.navigationController?.navigationBar.titleTextAttributes = [
+            NSAttributedString.Key.foregroundColor:UIColor(red: 180/255,
+                                                           green: 215/255,
+                                                           blue: 241/255,
+                                                           alpha: 1)
+        ]
     }
     
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        textField.resignFirstResponder()
-        return true
-    }
-    @objc private func textFieldChanged() {
-        
-        if nameTX.text!.isEmpty == false && descriptionTX.text!.isEmpty == false {
-            saveBarButtonItem.isEnabled = true
-        } else {
-            saveBarButtonItem.isEnabled = false
-        }
-    }
     private func setupEditScreen() {
-        
         if currentList != nil {
-            
             nameTX.text = currentList.name
             descriptionTX.text = currentList.descriptionlist
             dateStartPicker.date = currentList.dateStart!
             dateFinishPicker.date = currentList.dateFinish!
-
         }
     }
     
+    // MARK: - Actions
+    
     @objc func didTapSaveButton() {
         if dateStartPicker.date < dateFinishPicker.date {
-            
             let nameText = nameTX.text
             let descriptionText = descriptionTX.text
             let startDate = dateStartPicker.date
             let finishDate = dateFinishPicker.date
-
+            
             let newList = List(id: UUID().uuidString, name: nameText!, descriptionlist: descriptionText!, dateStart: startDate, dateFinish: finishDate)
-
+            
             if currentList != nil {
                 try! realm.write {
                     currentList?.name = newList.name
@@ -202,8 +191,9 @@ final class NewListViewController: UIViewController, UITextFieldDelegate {
             
             navigationController?.popToRootViewController(animated: true)
         } else {
-            
-            let alert = UIAlertController(title: "Введенные данные времени и дат некорректны", message: "Проверте введенные вами параметры даты и времени. Начало событие не может быть позднее его окончания", preferredStyle: .alert)
+            let alert = UIAlertController(title: "Введенные данные времени и дат некорректны",
+                                          message: "Проверте введенные вами параметры даты и времени. Начало событие не может быть позднее его окончания",
+                                          preferredStyle: .alert)
             
             let cancel = UIAlertAction(title: "Ok", style: .cancel)
             
@@ -212,6 +202,22 @@ final class NewListViewController: UIViewController, UITextFieldDelegate {
             
             dateFinishPicker.backgroundColor = .red
             dateStartPicker.backgroundColor = .red
+        }
+    }
+}
+
+extension NewListViewController: UITextFieldDelegate {
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    @objc private func textFieldChanged() {
+        if nameTX.text!.isEmpty == false && descriptionTX.text!.isEmpty == false {
+            saveBarButtonItem.isEnabled = true
+        } else {
+            saveBarButtonItem.isEnabled = false
         }
     }
 }

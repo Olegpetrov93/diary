@@ -10,6 +10,8 @@ import RealmSwift
 
 struct Event {
     
+    let list: List
+
     let bw: Float = 1
     let bofset: Float = 0.01
     
@@ -20,6 +22,7 @@ struct Event {
     
     var y0: Float
     var y1: Float
+   
     var x0: Float {
         get {
             if bwValue == 0 {
@@ -29,6 +32,7 @@ struct Event {
             }
         }
     }
+    
     var x1: Float {
         get {
             if bwValue == 0 {
@@ -38,12 +42,8 @@ struct Event {
             }
         }
     }
-    
-    let list: List
-    
-    
-    static func createEvents(filtredList: Results<List>?, day: Date) -> [Event]? {
         
+    static func createEvents(filtredList: Results<List>?, day: Date) -> [Event]? {
         var createvents : [Event] = []
         
         guard let filtredList = filtredList, !filtredList.isEmpty else { return createvents }
@@ -106,8 +106,14 @@ struct Event {
                 serialNomberVal = bwVal - Float(nexthValue)
             }
             
-            createvents.append(Event(bofsetValue: bofsetVal, bwValue: bwVal, serialNomber: serialNomberVal, y0: currentItem.createhourStart(toDay: day), y1: currentItem.createhourFinish(toDay: day), list: currentItem))
+            createvents.append(Event(list: currentItem,
+                                     bofsetValue: bofsetVal,
+                                     bwValue: bwVal,
+                                     serialNomber: serialNomberVal,
+                                     y0: currentItem.createhourStart(toDay: day),
+                                     y1: currentItem.createhourFinish(toDay: day)))
         }
+        
         return createvents
     }
 }

@@ -50,7 +50,7 @@ final class List: Object {
                   dateStart: Date(timeIntervalSince1970: item.date_start),
                   dateFinish: Date(timeIntervalSince1970: item.date_finish))
     }
-
+    
     
     convenience init(courseJson: JSON) {
         self.init()
@@ -68,7 +68,7 @@ final class List: Object {
         if Calendar.current.component(.day, from: (toDay)) < Calendar.current.component(.day, from: (self.dateFinish!)) {
             return Float(24)
         } else {
-        return Float(Calendar.current.component(.hour, from: (self.dateFinish!)))
+            return Float(Calendar.current.component(.hour, from: (self.dateFinish!)))
         }
     }
     
