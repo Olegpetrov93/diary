@@ -24,7 +24,7 @@ final class DataService {
         for item in arr {
             let newRealmItem = List(from: item)
             
-            StorageManadger.saveObject(newRealmItem)
+            StorageManager.saveObject(newRealmItem)
         }
     }
     

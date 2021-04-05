@@ -12,13 +12,22 @@ import MobileCoreServices
 
 final class RootVC: UIViewController {
     
-    private lazy var contentViewSize = CGSize(width: self.view.frame.width, height: self.view.frame.height + 200)
-    
+    private lazy var contentViewRect = CGRect(x: indent,
+                                              y: 0,
+                                              width: self.view.frame.width - indent,
+                                              height: self.view.frame.height + 200)
+
+    private lazy var canvasViewRect = CGRect(x: 0,
+                                             y: 0,
+                                             width: indent,
+                                             height: self.view.frame.height + 200)
+    private lazy var scrolViewSize = CGSize(width: self.view.frame.width, height: self.view.frame.height + 200)
+
     private lazy var scrollView: UIScrollView = {
         let view = UIScrollView(frame: .zero)
         view.backgroundColor = .white
         view.frame = self.view.bounds
-        view.contentSize = contentViewSize
+        view.contentSize = scrolViewSize
         view.autoresizingMask = .flexibleHeight
         view.showsHorizontalScrollIndicator = true
         view.bounces = true
@@ -26,16 +35,14 @@ final class RootVC: UIViewController {
     }()
     
     private lazy var contentView: UIView = {
-        let view = UIView()
+        let view = UIView(frame: contentViewRect)
         view.backgroundColor = .clear
-        view.frame.size = contentViewSize
         return view
     }()
     
     private lazy var canvasView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        view.frame.size = contentViewSize
+        let view = UIView(frame: canvasViewRect)
+        view.backgroundColor = .clear
         return view
     }()
     
@@ -127,7 +134,7 @@ final class RootVC: UIViewController {
         for i in 0...24 {
             let devider = UIView(frame: CGRect(x: 0,
                                                y: hourHeight * CGFloat(i),
-                                               width: canvasView.frame.width,
+                                               width: scrollView.frame.width,
                                                height: 0.5))
             devider.backgroundColor = UIColor.gray.withAlphaComponent(0.5)
             
@@ -139,7 +146,7 @@ final class RootVC: UIViewController {
             label.center.y = devider.frame.origin.y + label.frame.height / 2
             label.textAlignment = .center
             
-            canvasView.addSubview(devider)
+            scrollView.addSubview(devider)
             canvasView.addSubview(label)
         }
     }
@@ -153,11 +160,12 @@ final class RootVC: UIViewController {
     
     private func filterContentForSearchDate() {
         let sortProperties = [
-            SortDescriptor(keyPath: "dateStart"),
-            SortDescriptor(keyPath: "dateFinish")
+            SortDescriptor(keyPath: "dateStart", ascending: true),
+            SortDescriptor(keyPath: "dateFinish", ascending: false)
         ]
         filtredList = toDoList!.filter("dateStartDay CONTAINS[c] %@ OR dateFinishDay CONTAINS[c] %@", todayStartString, todayStartString).sorted(by: sortProperties)
-        events = Event.createEvents(filtredList: filtredList, day: todayStart)!
+        
+        events = Event.createEvent(filtredList: filtredList, day: todayStart)!
     }
     
     private func reloadEvents() {
@@ -168,9 +176,10 @@ final class RootVC: UIViewController {
         if events.count != 0 {
             for i in 0...events.count - 1 {
                 
-                let rect = CGRect(x: indent + CGFloat(events[i].x0) * contentView.frame.size.width ,
+                
+                let rect = CGRect(x: (CGFloat(events[i].x0) * contentView.frame.size.width) ,
                                   y: ((contentView.frame.size.height - 40) * CGFloat(events[i].y0) / 24) + 3,
-                                  width: (contentView.frame.size.width-(indent + 10)) * CGFloat(events[i].x1 - events[i].x0),
+                                  width: (contentView.frame.size.width-10) * CGFloat(events[i].x1 - events[i].x0),
                                   height: (contentView.frame.size.height - 40) * CGFloat((events[i].y1 - events[i].y0) / 24) - 5)
                 
                 let itemView = EventView(frame: rect)
@@ -184,8 +193,6 @@ final class RootVC: UIViewController {
                 itemView.onTap = { [weak self] in
                     guard let self = self else { return }
                     let vc = NewListViewController()
-                    //                    let storyboard = UIStoryboard(name: "NewListVC", bundle: nil)
-                    //                    let vc = storyboard.instantiateViewController(withIdentifier: "NewListVC") as! NewListVC
                     
                     vc.currentList = self.events[i].list
                     
@@ -205,7 +212,12 @@ final class RootVC: UIViewController {
     @objc private func openNewVC() {
         let vc = NewListViewController()
         vc.modalPresentationStyle = .fullScreen
-        vc.title = "Новоле событие"
+        vc.title = "Новое событие"
+        
+        //                    let storyboard = UIStoryboard(name: "NewListVC", bundle: nil)
+        //                    let vc = storyboard.instantiateViewController(withIdentifier: "NewListVC") as! NewListVC
+        // создал storyboard с установленными view, так как настройку в коде сделал раньше оставил рабочую версию в коде. Но если потребуется дополнительно, что-то показать то я готов
+        
         
         navigationController?.pushViewController(vc, animated: true)
     }

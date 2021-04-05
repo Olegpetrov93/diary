@@ -17,14 +17,14 @@ final class List: Object {
     @objc dynamic var dateFinish: Date?
     @objc dynamic var dateFinishDay: String?
     @objc dynamic var name: String = ""
-    @objc dynamic var descriptionlist: String?
+    @objc dynamic var descriptionList: String?
     
     var workItem: CodableWorkItem {
         return CodableWorkItem(id: id ?? "",
                                date_start: dateStart?.timeIntervalSince1970 ?? 0,
                                date_finish: dateFinish?.timeIntervalSince1970 ?? 0,
                                name: name,
-                               description: descriptionlist ?? "")
+                               description: descriptionList ?? "")
     }
     
     override static func primaryKey() -> String? { //you need this in case you will want to update this object in Realm
@@ -36,7 +36,7 @@ final class List: Object {
         
         self.id = id
         self.name = name
-        self.descriptionlist = descriptionlist
+        self.descriptionList = descriptionlist
         self.dateStart = dateStart
         self.dateFinish = dateFinish
         self.dateStartDay = dateFormatterOffTime.string(from: dateStart)
@@ -57,14 +57,14 @@ final class List: Object {
         
         self.id = courseJson["id"].stringValue
         self.name = courseJson["book"].stringValue
-        self.descriptionlist = courseJson["lesson"].stringValue
+        self.descriptionList = courseJson["lesson"].stringValue
         self.dateStart = Date(courseJson["dateStart"].stringValue)
         self.dateFinish = Date(courseJson["dateFinish"].stringValue)
         self.dateStartDay = courseJson["dateStartDay"].stringValue
         self.dateFinishDay = courseJson["dateFinishDay"].stringValue
     }
     
-    func createhourFinish(toDay: Date) -> Float {
+    func createHourFinish(toDay: Date) -> Float {
         if Calendar.current.component(.day, from: (toDay)) < Calendar.current.component(.day, from: (self.dateFinish!)) {
             return Float(24)
         } else {
@@ -72,7 +72,7 @@ final class List: Object {
         }
     }
     
-    func createhourStart(toDay: Date) -> Float {
+    func createHourStart(toDay: Date) -> Float {
         if Calendar.current.component(.day, from: (toDay)) > Calendar.current.component(.day, from: (self.dateStart!)) {
             return Float(0)
         } else {

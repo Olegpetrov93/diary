@@ -13,12 +13,12 @@ struct Event {
     let list: List
 
     let bw: Float = 1
-    let bofset: Float = 0.01
+    let bofset: Float = 0.001
     
-    var bofsetValue: Float
+    var bofSetValue: Float
     var bwValue: Float
     
-    let serialNomber : Float
+    let serialNumber : Float
     
     var y0: Float
     var y1: Float
@@ -26,9 +26,9 @@ struct Event {
     var x0: Float {
         get {
             if bwValue == 0 {
-                return bofsetValue * bofset
+                return bofSetValue * bofset
             } else {
-                return bofsetValue * bofset + (bw / (bwValue + 1) * serialNomber)
+                return bofSetValue * bofset + (bw / (bwValue + 1) * serialNumber)
             }
         }
     }
@@ -36,53 +36,53 @@ struct Event {
     var x1: Float {
         get {
             if bwValue == 0 {
-                return bw - bofsetValue * bofset
+                return bw - bofSetValue * bofset
             } else {
-                return (bw) / (bwValue + 1) + (bw / (bwValue + 1) * serialNomber) - bofsetValue * bofset
+                return (bw) / (bwValue + 1) + (bw / (bwValue + 1) * serialNumber) - bofSetValue * bofset
             }
         }
     }
         
-    static func createEvents(filtredList: Results<List>?, day: Date) -> [Event]? {
-        var createvents : [Event] = []
+    static func createEvent(filtredList: Results<List>?, day: Date) -> [Event]? {
+        var createEvents : [Event] = []
         
-        guard let filtredList = filtredList, !filtredList.isEmpty else { return createvents }
+        guard let filtredList = filtredList, !filtredList.isEmpty else { return createEvents }
         
-        var bofsetVal: Float
+        var bofSetVal: Float
         var bwVal: Float
         
         var maxValue = Float(Calendar.current.component(.hour, from: (filtredList.first?.dateFinish)!))
         var end = 0
         
-        var serialNomberVal : Float
+        var serialNumberVal : Float
         
         for (index, currentItem) in filtredList.enumerated() {
-            bofsetVal = 0
-            maxValue = max(maxValue, currentItem.createhourFinish(toDay: day))
-            if currentItem.createhourFinish(toDay: day) == maxValue {
+            bofSetVal = 0
+            maxValue = max(maxValue, currentItem.createHourFinish(toDay: day))
+            if currentItem.createHourFinish(toDay: day) == maxValue {
                 end = index
             } else {
                 for itemIndex in end...index-1 {
-                    if filtredList[itemIndex].createhourFinish(toDay: day) > filtredList[index].createhourFinish(toDay: day) {
-                        bofsetVal += 1
+                    if filtredList[itemIndex].createHourFinish(toDay: day) > filtredList[index].createHourFinish(toDay: day) {
+                        bofSetVal += 1
                     }
                 }
             }
             
             var previosValue: Int
-            var nexthValue: Int
+            var nextValue: Int
             
             var previosIndex: Int
             var nextIndex: Int
             
             if index == filtredList.count-1 {
-                nexthValue = 0
+                nextValue = 0
             } else {
                 nextIndex = index + 1
-                nexthValue = 0
+                nextValue = 0
                 while nextIndex < filtredList.count
-                        && currentItem.createhourStart(toDay: day) == filtredList[nextIndex].createhourStart(toDay: day) {
-                    nexthValue += 1
+                        && currentItem.createHourStart(toDay: day) == filtredList[nextIndex].createHourStart(toDay: day) {
+                    nextValue += 1
                     nextIndex += 1
                 }
             }
@@ -93,27 +93,27 @@ struct Event {
                 previosIndex = index - 1
                 previosValue = 0
                 while previosIndex >= 0 &&
-                        currentItem.createhourStart(toDay: day) == filtredList[previosIndex].createhourStart(toDay: day) {
+                        currentItem.createHourStart(toDay: day) == filtredList[previosIndex].createHourStart(toDay: day) {
                     previosIndex -= 1
                     previosValue += 1
                 }
             }
             
-            bwVal = Float(previosValue + nexthValue)
+            bwVal = Float(previosValue + nextValue)
             if bwVal == 0 {
-                serialNomberVal = 0
+                serialNumberVal = 0
             } else {
-                serialNomberVal = bwVal - Float(nexthValue)
+                serialNumberVal = bwVal - Float(nextValue)
             }
             
-            createvents.append(Event(list: currentItem,
-                                     bofsetValue: bofsetVal,
+            createEvents.append(Event(list: currentItem,
+                                     bofSetValue: bofSetVal,
                                      bwValue: bwVal,
-                                     serialNomber: serialNomberVal,
-                                     y0: currentItem.createhourStart(toDay: day),
-                                     y1: currentItem.createhourFinish(toDay: day)))
+                                     serialNumber: serialNumberVal,
+                                     y0: currentItem.createHourStart(toDay: day),
+                                     y1: currentItem.createHourFinish(toDay: day)))
         }
         
-        return createvents
+        return createEvents
     }
 }

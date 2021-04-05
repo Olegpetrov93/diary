@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SwiftyJSON
 
 final class NewListViewController: UIViewController {
     
@@ -38,8 +37,16 @@ final class NewListViewController: UIViewController {
         return dateFinishLabel
     }()
     
-    private let dateStartPicker = UIDatePicker()
-    private let dateFinishPicker = UIDatePicker()
+    private let dateStartPicker : UIDatePicker = {
+        let dateStartPicker = UIDatePicker()
+        dateStartPicker.locale = Locale(identifier: "ru_RU")
+        return dateStartPicker
+    }()
+    private let dateFinishPicker : UIDatePicker = {
+        let dateFinishPicker = UIDatePicker()
+        dateFinishPicker.locale = Locale(identifier: "ru_RU")
+        return dateFinishPicker
+    }()
     
     private let saveBarButtonItem = UIBarButtonItem(title: "Save", style: .done, target: self, action: #selector(didTapSaveButton))
     
@@ -58,11 +65,12 @@ final class NewListViewController: UIViewController {
         nameTX.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
         descriptionTX.addTarget(self, action: #selector(textFieldChanged), for: .editingChanged)
         
-        let startDate = Date().addingTimeInterval(1 * 60 * 60)
-        dateStartPicker.setDate(startDate, animated: true)
-        dateStartPicker.maximumDate = startDate.addingTimeInterval(1 * 60 * 60)
-        dateFinishPicker.setDate(dateStartPicker.maximumDate!, animated: true)
-        dateFinishPicker.minimumDate = dateStartPicker.maximumDate!
+        //        let startDate = Date().addingTimeInterval(1 * 60 * 60)
+        //        dateStartPicker.setDate(startDate, animated: true)
+        //        dateStartPicker.maximumDate = startDate.addingTimeInterval(1 * 60 * 60)
+        //        dateFinishPicker.setDate(dateStartPicker.maximumDate!, animated: true)
+        //        dateFinishPicker.minimumDate = dateStartPicker.maximumDate!
+        // не успел доработать логику
         
         dateStartPicker.addTarget(self, action: #selector(pickerChange(_:)), for: .valueChanged)
         
@@ -159,7 +167,7 @@ final class NewListViewController: UIViewController {
     private func setupEditScreen() {
         if currentList != nil {
             nameTX.text = currentList.name
-            descriptionTX.text = currentList.descriptionlist
+            descriptionTX.text = currentList.descriptionList
             dateStartPicker.date = currentList.dateStart!
             dateFinishPicker.date = currentList.dateFinish!
         }
@@ -171,28 +179,28 @@ final class NewListViewController: UIViewController {
         if dateStartPicker.date < dateFinishPicker.date {
             let nameText = nameTX.text
             let descriptionText = descriptionTX.text
-            let startDate = dateStartPicker.date
-            let finishDate = dateFinishPicker.date
+            let startDate = timeAdjustment(date: dateStartPicker.date)
+            let finishDate = timeAdjustment(date: dateFinishPicker.date)
             
             let newList = List(id: UUID().uuidString, name: nameText!, descriptionlist: descriptionText!, dateStart: startDate, dateFinish: finishDate)
             
             if currentList != nil {
                 try! realm.write {
                     currentList?.name = newList.name
-                    currentList?.descriptionlist = newList.descriptionlist
+                    currentList?.descriptionList = newList.descriptionList
                     currentList?.dateStart = newList.dateStart
                     currentList.dateStartDay = newList.dateStartDay
                     currentList?.dateFinish = newList.dateFinish
                     currentList.dateFinishDay = newList.dateFinishDay
                 }
             } else {
-                StorageManadger.saveObject(newList)
+                StorageManager.saveObject(newList)
             }
             
             navigationController?.popToRootViewController(animated: true)
         } else {
             let alert = UIAlertController(title: "Введенные данные времени и дат некорректны",
-                                          message: "Проверте введенные вами параметры даты и времени. Начало событие не может быть позднее его окончания",
+                                          message: "Проверьте введенные вами параметры даты и времени. Начало событие не может быть позднее его окончания",
                                           preferredStyle: .alert)
             
             let cancel = UIAlertAction(title: "Ok", style: .cancel)
@@ -204,7 +212,26 @@ final class NewListViewController: UIViewController {
             dateStartPicker.backgroundColor = .red
         }
     }
+    func timeAdjustment(date: Date) -> Date {
+        var dateComponents = DateComponents()
+        dateComponents.day = Calendar.current.component(.day, from: date)
+        dateComponents.month = Calendar.current.component(.month, from: date)
+        dateComponents.year = Calendar.current.component(.year, from: date)
+        dateComponents.hour = Calendar.current.component(.hour, from: date)
+        if Calendar.current.component(.hour, from: date) < 15 {
+            dateComponents.minute = 0
+        } else if Calendar.current.component(.hour, from: date) >= 15 && Calendar.current.component(.hour, from: date) < 30 {
+            dateComponents.minute = 15
+        } else if Calendar.current.component(.hour, from: date) >= 30 && Calendar.current.component(.hour, from: date) < 45 {
+            dateComponents.minute = 30
+        } else {
+            dateComponents.minute = 45
+        }
+        guard let dataConvert = Calendar.current.date(from: dateComponents) else { return date }
+        return dataConvert
+    }
 }
+
 
 extension NewListViewController: UITextFieldDelegate {
     
